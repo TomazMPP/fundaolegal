@@ -10,6 +10,9 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+Para ativar o Google Analytics, defina `NEXT_PUBLIC_GA_ID` (o ID de medição do GA4, `G-XXXXXXXXXX`) em `.env.local`
+ou nas variáveis de ambiente da Vercel. Sem ela, o site roda sem analytics.
+
 Os dados já processados ficam em `src/data/*.json` (lidos no servidor, não vão para o navegador).
 
 ## Atualizar os dados

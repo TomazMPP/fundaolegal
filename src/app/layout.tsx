@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import { Faustina, Geist } from "next/font/google";
 import Link from "next/link";
@@ -7,6 +8,9 @@ import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const faustina = Faustina({ subsets: ["latin"], variable: "--font-faustina" });
+
+// ID de medição do GA4 (G-XXXXXXXXXX). Sem ele, o site roda sem analytics.
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
   title: { default: "Fundão Legal", template: "%s | Fundão Legal" },
@@ -45,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </footer>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }
