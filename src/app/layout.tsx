@@ -9,8 +9,8 @@ import "./globals.css";
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const faustina = Faustina({ subsets: ["latin"], variable: "--font-faustina" });
 
-// ID de medição do GA4 (G-XXXXXXXXXX). Sem ele, o site roda sem analytics.
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+// ID de medição do GA4. Só carrega em produção, para o ambiente local não contar visitas.
+const GA_ID = process.env.NODE_ENV === "production" ? (process.env.NEXT_PUBLIC_GA_ID ?? "G-2PDJEL372S") : undefined;
 
 export const metadata: Metadata = {
   title: { default: "Fundão Legal", template: "%s | Fundão Legal" },
