@@ -1,76 +1,81 @@
 @import "tailwindcss";
 
+/* Tema único, escuro e quente. O dourado é reservado para dinheiro público. */
 :root {
-  color-scheme: light;
-  --page: #f9f9f7;
-  --surface: #fcfcfb;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --muted: #7a7873;
-  --line: #e7e6df;
-  --axis: #c3c2b7;
-  --hover: rgba(11, 11, 11, 0.035);
-  --fefc: #2a78d6;
-  --fp: #eb6834;
-  --outros: #c3c2b7;
-  --accent: #2a78d6;
-  --accent-ink: #1c5cab;
-  --bar: #2a78d6;
-  --bar-soft: #cde2fb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:where(:not([data-theme="light"])) {
-    color-scheme: dark;
-    --page: #0d0d0d;
-    --surface: #1a1a19;
-    --ink: #ffffff;
-    --ink-2: #c3c2b7;
-    --muted: #898781;
-    --line: #2c2c2a;
-    --axis: #383835;
-    --hover: rgba(255, 255, 255, 0.04);
-    --fefc: #3987e5;
-    --fp: #d95926;
-    --outros: #52514e;
-    --accent: #3987e5;
-    --accent-ink: #86b6ef;
-    --bar: #3987e5;
-    --bar-soft: #184f95;
-  }
+  color-scheme: dark;
+  --bg: #100f0d;
+  --panel: #171513;
+  --panel-2: #1f1d1a;
+  --line: rgba(246, 243, 236, 0.09);
+  --line-2: rgba(246, 243, 236, 0.16);
+  --fg: #f6f3ec;
+  --fg-2: #d3cec4;
+  --fg-3: #a29d93;
+  --fg-4: #6e6a62;
+  --ouro: #e3b76a;
+  --ouro-claro: #f2cf92;
+  --ocre: #9a6a2c;
+  --resto: #3b3833;
+  --hover: rgba(246, 243, 236, 0.035);
 }
 
 @theme inline {
-  --color-page: var(--page);
-  --color-surface: var(--surface);
-  --color-ink: var(--ink);
-  --color-ink-2: var(--ink-2);
-  --color-muted: var(--muted);
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
   --color-line: var(--line);
-  --color-axis: var(--axis);
+  --color-line-2: var(--line-2);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-fg-4: var(--fg-4);
+  --color-ouro: var(--ouro);
+  --color-ouro-claro: var(--ouro-claro);
+  --color-ocre: var(--ocre);
+  --color-resto: var(--resto);
   --color-hover: var(--hover);
-  --color-fefc: var(--fefc);
-  --color-fp: var(--fp);
-  --color-outros: var(--outros);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-bar: var(--bar);
-  --color-bar-soft: var(--bar-soft);
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-sans: var(--font-geist), "Helvetica Neue", Helvetica, sans-serif;
+  --font-serif: var(--font-faustina), Georgia, serif;
 }
 
 body {
-  background: var(--page);
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--ouro);
+  color: var(--bg);
 }
 
 .tnum {
   font-variant-numeric: tabular-nums;
 }
 
-/* Tooltip CSS-only: aparece em hover e foco de teclado. */
+.rotulo {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+.chapeu {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ouro);
+}
+
+/* Hachura para eleições com dados preliminares. */
+.hachura {
+  background: repeating-linear-gradient(135deg, var(--resto) 0 4px, #2a2825 4px 8px);
+}
+
+/* Tooltip só com CSS: aparece em hover e no foco por teclado. */
 .tip {
   position: relative;
 }
@@ -79,18 +84,23 @@ body {
   position: absolute;
   z-index: 20;
   left: 50%;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   transform: translateX(-50%);
   display: none;
   white-space: nowrap;
-  background: var(--ink);
-  color: var(--page);
+  background: var(--fg);
+  color: var(--bg);
   font-size: 12px;
-  line-height: 1.4;
-  padding: 6px 8px;
-  border-radius: 6px;
+  line-height: 1.45;
+  padding: 6px 10px;
+  border-radius: 8px;
 }
 .tip:hover > .tip-box,
 .tip:focus-visible > .tip-box {
   display: block;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ouro);
+  outline-offset: 2px;
 }

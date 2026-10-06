@@ -1,209 +1,248 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { fmtBRL, fmtBRLc, fmtInt, fmtPct } from "@/lib/format";
+import { fmtBRL, fmtBRLc, fmtPct } from "@/lib/format";
 
-/* ---------------- Stat tile ---------------- */
+/* ---------------- Blocos de página ---------------- */
 
-export function Stat({
+export function Painel({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <section className={`min-w-0 rounded-[18px] border border-line bg-panel p-5 sm:p-8 ${className}`}>{children}</section>;
+}
+
+export function Titulo({
+  chapeu,
+  children,
+  sub,
+  tamanho = "md",
+  acao,
+}: {
+  chapeu?: string;
+  children: ReactNode;
+  sub?: ReactNode;
+  tamanho?: "sm" | "md";
+  acao?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex max-w-3xl flex-col gap-2">
+        {chapeu && <span className="chapeu">{chapeu}</span>}
+        <h2
+          className={`font-serif font-medium tracking-tight text-fg ${
+            tamanho === "md" ? "text-[28px] leading-[1.15] sm:text-[32px]" : "text-2xl leading-tight"
+          }`}
+        >
+          {children}
+        </h2>
+        {sub && <p className={tamanho === "md" ? "text-fg-2" : "text-[13px] text-fg-3"}>{sub}</p>}
+      </div>
+      {acao}
+    </div>
+  );
+}
+
+export function BotaoContorno({ href, children, download }: { href: string; children: ReactNode; download?: boolean }) {
+  const cls =
+    "inline-flex min-h-11 items-center gap-2 rounded-full border border-ouro/40 px-[18px] text-sm text-ouro hover:border-ouro hover:text-ouro-claro";
+  return download ? (
+    <a href={href} className={cls}>
+      <IconeBaixar />
+      {children}
+    </a>
+  ) : (
+    <Link href={href} className={cls}>
+      {children}
+    </Link>
+  );
+}
+
+export function IconeBaixar() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 4v11" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M5 20h14" />
+    </svg>
+  );
+}
+
+/* ---------------- Números ---------------- */
+
+export function FaixaNumeros({ children }: { children: ReactNode }) {
+  return (
+    <section className="grid grid-cols-1 border-y border-line sm:grid-cols-2 lg:grid-cols-4">{children}</section>
+  );
+}
+
+export function Numero({
   rotulo,
   valor,
-  detalhe,
-  delta,
+  nota,
+  destaque,
 }: {
   rotulo: string;
   valor: ReactNode;
-  detalhe?: ReactNode;
-  delta?: { texto: string; rotulo: string } | null;
+  nota?: ReactNode;
+  destaque?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-1 rounded-lg border border-line bg-surface p-4">
-      <div className="text-xs text-muted">{rotulo}</div>
-      <div className="text-2xl font-semibold tracking-tight">{valor}</div>
-      {(detalhe || delta) && (
-        <div className="text-xs text-ink-2">
-          {delta && (
-            <span className="mr-1.5 font-medium text-ink">
-              {delta.texto} <span className="font-normal text-muted">{delta.rotulo}</span>
-            </span>
-          )}
-          {detalhe}
-        </div>
-      )}
+    <div className="flex flex-col gap-1.5 border-line py-6 pr-6 not-last:border-b sm:not-last:border-b-0">
+      <span className="text-[13px] text-fg-3">{rotulo}</span>
+      <span className={`font-serif text-[40px] leading-[1.1] font-medium tracking-tight ${destaque ? "text-ouro" : ""}`}>
+        {valor}
+      </span>
+      {nota && <span className="text-[13px] text-fg-2">{nota}</span>}
     </div>
   );
 }
 
-/* ---------------- Composição por fonte (part-to-whole, 3 segmentos) ---------------- */
-
-export const FONTES = [
-  { k: "fefc", rotulo: "Fundo eleitoral (FEFC)", cor: "bg-fefc" },
-  { k: "fp", rotulo: "Fundo Partidário", cor: "bg-fp" },
-  { k: "outros", rotulo: "Outros recursos ou sem pagamento registrado", cor: "bg-outros" },
-] as const;
+/* ---------------- Origem do dinheiro (parte do todo, 3 segmentos) ---------------- */
 
 type Fontes = { valor: number; fefc: number; fp: number };
 
-/** "Outros" = tudo que não veio de fundo público, incluindo o que não tem pagamento registrado. */
-const partes = (d: Fontes) => ({ fefc: d.fefc, fp: d.fp, outros: Math.max(d.valor - d.fefc - d.fp, 0) });
+const FONTES = [
+  { k: "fefc", rotulo: "Fundo eleitoral (FEFC)", cor: "bg-ouro" },
+  { k: "fp", rotulo: "Fundo Partidário", cor: "bg-ocre" },
+  { k: "outros", rotulo: "Doações, recursos próprios ou ainda sem pagamento", cor: "bg-resto" },
+] as const;
 
-export function Legenda() {
+export function OrigemDinheiro({ d, titulo }: { d: Fontes; titulo: ReactNode }) {
+  const partes = { fefc: d.fefc, fp: d.fp, outros: Math.max(d.valor - d.fefc - d.fp, 0) };
+  const total = d.valor || 1;
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
-      {FONTES.map((f) => (
-        <span key={f.k} className="inline-flex items-center gap-1.5">
-          <span className={`size-2.5 rounded-sm ${f.cor}`} />
-          {f.rotulo}
-        </span>
-      ))}
+    <div className="flex flex-col gap-[18px] rounded-[18px] border border-line bg-panel p-6 sm:p-7">
+      <p className="text-[13px] text-fg-3">{titulo}</p>
+      <div className="flex h-3.5 gap-[3px]">
+        {FONTES.map((f) =>
+          partes[f.k] > 0 ? (
+            <div
+              key={f.k}
+              className={`${f.cor} first:rounded-l last:rounded-r`}
+              style={{ width: `${(100 * partes[f.k]) / total}%` }}
+            />
+          ) : null,
+        )}
+      </div>
+      <ul className="flex flex-col">
+        {FONTES.map((f) => (
+          <li key={f.k} className="flex items-baseline gap-3 border-b border-line py-3 last:border-0">
+            <span className={`size-2.5 shrink-0 rounded-[3px] ${f.cor}`} aria-hidden="true" />
+            <span className="flex-1">{f.rotulo}</span>
+            <span className="tnum font-medium">{fmtBRLc(partes[f.k])}</span>
+            <span className="tnum w-11 text-right text-fg-3">{fmtPct(partes[f.k] / total)}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export function BarraFontes({ d: bruto }: { d: Fontes }) {
-  const d = partes(bruto);
-  const total = bruto.valor || 1;
-  return (
-    <div className="flex h-3 w-full gap-[2px] overflow-hidden rounded">
-      {FONTES.map((f) =>
-        d[f.k] > 0 ? (
-          <div
-            key={f.k}
-            tabIndex={0}
-            className={`tip h-full ${f.cor} first:rounded-l last:rounded-r`}
-            style={{ width: `${(100 * d[f.k]) / total}%` }}
-          >
-            <span className="tip-box">
-              {f.rotulo}: {fmtBRL(d[f.k])} ({fmtPct(d[f.k] / total)})
-            </span>
-          </div>
-        ) : null,
-      )}
-    </div>
-  );
-}
+/* ---------------- Série por eleição: colunas, dinheiro público em dourado ---------------- */
 
-/* ---------------- Série por eleição: colunas empilhadas por fonte ---------------- */
+export type PontoSerie = { ano: number; valor: number; publico: number; nota?: string };
 
-export function SerieAnos({
+export function SerieEleicoes({
   dados,
   destaque,
   parciais = [],
+  altura = 230,
 }: {
-  dados: ({ ano: number } & Fontes)[];
+  dados: PontoSerie[];
   destaque?: number;
   parciais?: number[];
+  altura?: number;
 }) {
   const max = Math.max(...dados.map((d) => d.valor), 1);
-  const passo = max > 500e6 ? 250e6 : max > 200e6 ? 100e6 : 50e6;
-  const topo = Math.ceil(max / passo) * passo;
-  const ticks = Array.from({ length: topo / passo + 1 }, (_, i) => i * passo);
-  const H = 180;
   return (
-    <div>
-      <div className="relative" style={{ height: H + 24 }}>
-        {ticks.map((t) => (
-          <div
-            key={t}
-            className="absolute right-0 left-14 border-t border-line"
-            style={{ bottom: 24 + (t / topo) * H }}
-          >
-            <span className="tnum absolute -top-2 -left-14 w-12 text-right text-[11px] text-muted">
-              {fmtBRLc(t).replace(",0", "")}
-            </span>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-end justify-between gap-3 border-b border-line-2" style={{ height: altura + 44 }}>
+        {dados.map((d) => {
+          const parcial = parciais.includes(d.ano);
+          const apagado = destaque !== undefined && d.ano !== destaque;
+          return (
+            <div
+              key={d.ano}
+              tabIndex={0}
+              className="tip flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2 outline-none"
+            >
+              <span className={`tnum text-[11px] whitespace-nowrap sm:text-[13px] ${apagado ? "text-fg-3" : "font-medium text-fg"}`}>{fmtBRLc(d.valor)}</span>
+              <div className="flex w-6 flex-col gap-[2px] sm:w-9" style={{ height: (altura * d.valor) / max }}>
+                <div
+                  className={`rounded-t ${parcial ? "hachura" : "bg-resto"}`}
+                  style={{ flexGrow: Math.max(d.valor - d.publico, 0) }}
+                />
+                <div className={`bg-ouro ${parcial ? "opacity-75" : ""}`} style={{ flexGrow: d.publico }} />
+              </div>
+              <span className="tip-box">
+                <b>{d.ano}</b>: {fmtBRL(d.valor)} contratados, {fmtBRL(d.publico)} em dinheiro público
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="-mt-1 flex justify-between gap-3">
+        {dados.map((d) => (
+          <div key={d.ano} className="flex min-w-0 flex-1 flex-col text-center">
+            <span className={`tnum text-sm ${destaque === d.ano ? "font-semibold text-fg" : ""}`}>{d.ano}</span>
+            <span className="text-xs text-fg-3">{d.nota ?? (parciais.includes(d.ano) ? "parcial" : d.ano % 4 === 0 ? "municipal" : "geral")}</span>
           </div>
         ))}
-        <div className="absolute right-0 bottom-6 left-14 flex h-[180px] items-end justify-around">
-          {dados.map((bruto) => {
-            const d = { ano: bruto.ano, ...partes(bruto) };
-            const total = bruto.valor;
-            return (
-              <div
-                key={d.ano}
-                tabIndex={0}
-                className={`tip flex h-full w-16 flex-col items-center justify-end outline-none ${
-                  destaque && d.ano !== destaque ? "opacity-45" : ""
-                }`}
-              >
-                <span className="tnum mb-1 text-[11px] font-medium text-ink">{fmtBRLc(total)}</span>
-                <div className="flex w-6 flex-col-reverse gap-[2px]" style={{ height: (total / topo) * H }}>
-                  {FONTES.map((f, i) =>
-                    d[f.k] > 0 ? (
-                      <div
-                        key={f.k}
-                        className={`${f.cor} w-full ${i === 2 || (i === 1 && !d.outros) ? "rounded-t" : ""}`}
-                        style={{ flexGrow: d[f.k] }}
-                      />
-                    ) : null,
-                  )}
-                </div>
-                <span className="tip-box">
-                  <b>{d.ano}</b> · {fmtBRL(total)}
-                  <br />
-                  FEFC {fmtBRLc(d.fefc)} · FP {fmtBRLc(d.fp)} · Outros {fmtBRLc(d.outros)}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="absolute right-0 bottom-0 left-14 flex justify-around">
-          {dados.map((d) => (
-            <span key={d.ano} className="tnum w-16 text-center text-xs text-ink-2">
-              {d.ano}
-              {parciais.includes(d.ano) ? "*" : ""}
-            </span>
-          ))}
-        </div>
+      </div>
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-fg-2">
+        <span className="inline-flex items-center gap-2">
+          <span className="size-2.5 rounded-[3px] bg-ouro" aria-hidden="true" />
+          Dinheiro público (fundo eleitoral e partidário)
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="size-2.5 rounded-[3px] bg-resto" aria-hidden="true" />
+          Outras fontes
+        </span>
+        {parciais.some((p) => dados.some((d) => d.ano === p)) && (
+          <span className="inline-flex items-center gap-2">
+            <span className="hachura size-2.5 rounded-[3px]" aria-hidden="true" />
+            Dados incompletos
+          </span>
+        )}
       </div>
     </div>
   );
 }
 
-/* ---------------- Lista de barras horizontais (uma série) ---------------- */
+/* ---------------- Listas com barra (uma série) ---------------- */
 
-export type ItemBarra = {
+export type ItemLista = {
   chave: string;
-  rotulo: ReactNode;
+  nome: ReactNode;
   valor: number;
+  texto: ReactNode;
+  extra?: ReactNode;
   href?: string;
-  dica?: string;
-  direita?: ReactNode;
 };
 
-export function BarList({
-  itens,
-  formato = fmtBRLc,
-  max,
-}: {
-  itens: ItemBarra[];
-  formato?: (v: number) => string;
-  max?: number;
-}) {
-  const m = max ?? Math.max(...itens.map((i) => i.valor), 1);
+export function ListaBarras({ itens, cor = "bg-fg-2" }: { itens: ItemLista[]; cor?: string }) {
+  const max = Math.max(...itens.map((i) => i.valor), 1);
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col gap-1">
       {itens.map((it) => {
-        const conteudo = (
+        const corpo = (
           <>
-            <div className="flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
-              <span className="min-w-0">{it.rotulo}</span>
-              <span className="tnum ml-auto text-ink-2">
-                {it.direita ?? formato(it.valor)}
+            <div className="tnum flex flex-wrap items-baseline justify-between gap-x-3 text-sm">
+              <span>{it.nome}</span>
+              <span className="ml-auto text-fg-2">
+                {it.texto} {it.extra && <span className="text-fg-3">{it.extra}</span>}
               </span>
             </div>
-            <div className="mt-1 h-1.5 w-full">
-              <div className="h-full rounded-r bg-bar" style={{ width: `${Math.max((100 * it.valor) / m, 0.5)}%` }} />
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-[3px] bg-fg/5">
+              <div className={`h-full rounded-[3px] ${cor}`} style={{ width: `${Math.max((100 * it.valor) / max, 0.5)}%` }} />
             </div>
           </>
         );
-        const cls = "-mx-2 block rounded-md px-2 py-1.5";
         return (
-          <li key={it.chave} title={it.dica}>
+          <li key={it.chave}>
             {it.href ? (
-              <Link href={it.href} className={`${cls} hover:bg-hover`}>
-                {conteudo}
+              <Link href={it.href} className="-mx-2 block rounded-lg px-2 py-1.5 hover:bg-hover">
+                {corpo}
               </Link>
             ) : (
-              <div className={cls}>{conteudo}</div>
+              <div className="py-1.5">{corpo}</div>
             )}
           </li>
         );
@@ -212,41 +251,58 @@ export function BarList({
   );
 }
 
-/* ---------------- Barra inline para células de tabela ---------------- */
-
-export function BarraCelula({ frac }: { frac: number }) {
+export function Barrinha({ frac, ouro, largura = "flex-1" }: { frac: number; ouro?: boolean; largura?: string }) {
   return (
-    <div className="h-1.5 w-full min-w-16 rounded-r bg-transparent">
-      <div className="h-full rounded-r bg-bar" style={{ width: `${Math.max(frac * 100, frac > 0 ? 1 : 0)}%` }} />
-    </div>
+    <span className={`block h-2 overflow-hidden rounded bg-fg/5 ${largura}`}>
+      <span
+        className={`block h-full rounded ${ouro ? "bg-ouro" : "bg-fg-4"}`}
+        style={{ width: `${Math.max(frac * 100, frac > 0 ? 1 : 0)}%` }}
+      />
+    </span>
   );
 }
 
-export function Card({
-  titulo,
-  sub,
-  acao,
-  children,
-  className = "",
+/* ---------------- Paginação ---------------- */
+
+export function Paginacao({
+  inicio,
+  fim,
+  total,
+  anterior,
+  proxima,
 }: {
-  titulo: string;
-  sub?: ReactNode;
-  acao?: ReactNode;
-  children: ReactNode;
-  className?: string;
+  inicio: number;
+  fim: number;
+  total: string;
+  anterior?: string;
+  proxima?: string;
 }) {
+  const cls = "inline-flex min-h-11 items-center rounded-full border border-line-2 px-4";
   return (
-    <section className={`min-w-0 rounded-lg border border-line bg-surface p-5 ${className}`}>
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-[15px] font-semibold tracking-tight">{titulo}</h2>
-          {sub && <p className="mt-0.5 text-xs leading-relaxed text-ink-2">{sub}</p>}
-        </div>
-        {acao && <div className="shrink-0 text-xs">{acao}</div>}
-      </div>
-      {children}
-    </section>
+    <nav className="flex flex-wrap items-center justify-between gap-3 text-sm text-fg-3" aria-label="Paginação">
+      <span className="tnum">
+        Mostrando {inicio.toLocaleString("pt-BR")} a {fim.toLocaleString("pt-BR")} de {total}
+      </span>
+      <span className="flex gap-2">
+        {anterior ? (
+          <Link href={anterior} scroll={false} className={`${cls} text-fg hover:border-fg-3`}>
+            Anterior
+          </Link>
+        ) : (
+          <span className={`${cls} text-fg-4`} aria-disabled="true">
+            Anterior
+          </span>
+        )}
+        {proxima ? (
+          <Link href={proxima} scroll={false} className={`${cls} text-fg hover:border-fg-3`}>
+            Próxima página
+          </Link>
+        ) : (
+          <span className={`${cls} text-fg-4`} aria-disabled="true">
+            Próxima página
+          </span>
+        )}
+      </span>
+    </nav>
   );
 }
-
-export const n = fmtInt;

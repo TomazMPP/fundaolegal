@@ -44,10 +44,12 @@ export type Firma = {
 
 export const ANOS = [2018, 2020, 2022, 2024, 2026] as const;
 export const ANO_PADRAO = 2026;
+/** Data de geração dos arquivos do TSE usados (atualize ao rodar o pipeline). */
+export const ATUALIZADO_EM = "4 de outubro de 2026";
 /** Eleições com dados incompletos, e o motivo (exibido na interface). */
 export const PARCIAIS: Record<number, string> = {
-  2018: "Em 2018 ainda não existia a categoria de despesa jurídica e contábil, então só aparecem escritórios identificados pelo CNAE.",
-  2026: "Dados preliminares: as candidaturas ainda podem declarar despesas até a prestação de contas final, 30 dias após a eleição.",
+  2018: "Em 2018 ainda não existia a categoria de despesa jurídica e contábil, então só aparecem escritórios identificados pelo código de atividade.",
+  2026: "Os números ainda vão crescer até a prestação de contas final, 30 dias depois da eleição.",
 };
 
 export const TIPOS: Record<TipoVinculo, string> = {
@@ -251,13 +253,13 @@ export function escritorio(id: string) {
 
 /** Faixas de concentração: quantos escritórios atendem N candidaturas e quanto faturam. */
 export const FAIXAS = [
-  { rotulo: "1", min: 1, max: 1 },
-  { rotulo: "2–4", min: 2, max: 4 },
-  { rotulo: "5–9", min: 5, max: 9 },
-  { rotulo: "10–19", min: 10, max: 19 },
-  { rotulo: "20–49", min: 20, max: 49 },
-  { rotulo: "50–99", min: 50, max: 99 },
-  { rotulo: "100+", min: 100, max: Infinity },
+  { rotulo: "1 cliente", min: 1, max: 1 },
+  { rotulo: "2 a 4", min: 2, max: 4 },
+  { rotulo: "5 a 9", min: 5, max: 9 },
+  { rotulo: "10 a 19", min: 10, max: 19 },
+  { rotulo: "20 a 49", min: 20, max: 49 },
+  { rotulo: "50 a 99", min: 50, max: 99 },
+  { rotulo: "100 ou mais", min: 100, max: Infinity },
 ];
 
 export function concentracao(lista: FirmaAgg[]) {

@@ -9,11 +9,8 @@ export function campoAno({ permitirTodos = true } = {}): Campo {
     rotulo: "Eleição",
     padrao: String(ANO_PADRAO),
     opcoes: [
-      ...[...ANOS].reverse().map((a) => ({
-        v: String(a),
-        l: `${a} · ${a % 4 === 0 ? "municipal" : "geral"}${PARCIAIS[a] ? " (parcial)" : ""}`,
-      })),
-      ...(permitirTodos ? [{ v: "todos", l: "Todas (2018–2026)" }] : []),
+      ...[...ANOS].reverse().map((a) => ({ v: String(a), l: PARCIAIS[a] ? `${a} · parcial` : String(a) })),
+      ...(permitirTodos ? [{ v: "todos", l: "Todas" }] : []),
     ],
   };
 }
@@ -27,7 +24,7 @@ export const campoTipo: Campo = {
 export function camposRecorte(): Campo[] {
   const o = opcoes();
   return [
-    { nome: "uf", rotulo: "UF da candidatura", opcoes: [todos(), ...o.ufs.map((u) => ({ v: u, l: u }))] },
+    { nome: "uf", rotulo: "Estado", opcoes: [todos(), ...o.ufs.map((u) => ({ v: u, l: u === "BR" ? "Nacional" : u }))] },
     { nome: "partido", rotulo: "Partido", opcoes: [todos(), ...o.partidos.map((p) => ({ v: p, l: p }))] },
     { nome: "cargo", rotulo: "Cargo", opcoes: [todos(), ...o.cargos.map((c) => ({ v: c, l: c }))] },
   ];
