@@ -42,10 +42,13 @@ export type Firma = {
   municipio_sede: string | null;
 };
 
-export const ANOS = [2018, 2020, 2022, 2024] as const;
-export const ANO_PADRAO = 2024;
-/** Em 2018 não existia a categoria de despesa jurídica/contábil: só capturamos PJ pelo CNAE. */
-export const ANO_PARCIAL = 2018;
+export const ANOS = [2018, 2020, 2022, 2024, 2026] as const;
+export const ANO_PADRAO = 2026;
+/** Eleições com dados incompletos, e o motivo (exibido na interface). */
+export const PARCIAIS: Record<number, string> = {
+  2018: "Em 2018 ainda não existia a categoria de despesa jurídica e contábil, então só aparecem escritórios identificados pelo CNAE.",
+  2026: "Dados preliminares: as candidaturas ainda podem declarar despesas até a prestação de contas final, 30 dias após a eleição.",
+};
 
 export const TIPOS: Record<TipoVinculo, string> = {
   adv: "Advocacia",

@@ -19,7 +19,7 @@ export default function Metodologia() {
       <ul>
         <li>
           Portal de Dados Abertos do TSE — <i>Prestação de contas eleitorais: candidatos</i>, eleições 2018,
-          2020, 2022 e 2024 (arquivos <code>despesas_contratadas</code> e <code>despesas_pagas</code>).
+          2020, 2022, 2024 e 2026 (arquivos <code>despesas_contratadas</code> e <code>despesas_pagas</code>).
         </li>
         <li>Sem raspagem nem dados privados: são arquivos públicos para download.</li>
       </ul>
@@ -37,6 +37,10 @@ export default function Metodologia() {
         <li>
           <b>2018 é parcial:</b> a categoria ainda não existia, então só aparecem escritórios identificados pelo
           CNAE. Não compare 2018 diretamente com as demais eleições.
+        </li>
+        <li>
+          <b>2026 é preliminar:</b> o arquivo do TSE traz as prestações parciais e os relatórios financeiros
+          entregues durante a campanha. Os números vão crescer até a prestação final, 30 dias após a eleição.
         </li>
       </ul>
 

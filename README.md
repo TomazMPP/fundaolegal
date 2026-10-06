@@ -1,7 +1,7 @@
 # Fundão Legal
 
 Painel público de quanto escritórios de advocacia e contabilidade faturam com campanhas eleitorais
-— e quanto disso é dinheiro público (FEFC + Fundo Partidário). Dados abertos do TSE, eleições 2018–2024.
+— e quanto disso é dinheiro público (FEFC + Fundo Partidário). Dados abertos do TSE, eleições 2018–2026.
 
 ## Rodar
 

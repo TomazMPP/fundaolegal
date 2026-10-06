@@ -1,5 +1,5 @@
 import type { Campo } from "@/components/FilterBar";
-import { ANOS, ANO_PADRAO, ANO_PARCIAL, opcoes } from "./data";
+import { ANOS, ANO_PADRAO, PARCIAIS, opcoes } from "./data";
 
 const todos = (l = "Todos") => ({ v: "", l });
 
@@ -11,9 +11,9 @@ export function campoAno({ permitirTodos = true } = {}): Campo {
     opcoes: [
       ...[...ANOS].reverse().map((a) => ({
         v: String(a),
-        l: `${a} · ${a % 4 === 0 ? "municipal" : "geral"}${a === ANO_PARCIAL ? " (parcial)" : ""}`,
+        l: `${a} · ${a % 4 === 0 ? "municipal" : "geral"}${PARCIAIS[a] ? " (parcial)" : ""}`,
       })),
-      ...(permitirTodos ? [{ v: "todos", l: "Todas (2018–2024)" }] : []),
+      ...(permitirTodos ? [{ v: "todos", l: "Todas (2018–2026)" }] : []),
     ],
   };
 }

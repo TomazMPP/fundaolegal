@@ -17,7 +17,7 @@ export function GET(req: NextRequest) {
   return new Response(corpo, {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="escritorios-${f.ano ?? "2018-2024"}.csv"`,
+      "content-disposition": `attachment; filename="escritorios-${f.ano ?? "2018-2026"}.csv"`,
     },
   });
 }

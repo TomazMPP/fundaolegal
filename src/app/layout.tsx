@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Fundão Legal", template: "%s · Fundão Legal" },
   description:
-    "Quanto escritórios de advocacia e contabilidade faturam com campanhas eleitorais pagas com dinheiro público. Dados abertos do TSE, 2018–2024.",
+    "Quanto escritórios de advocacia e contabilidade faturam com campanhas eleitorais pagas com dinheiro público. Dados abertos do TSE, 2018–2026.",
 };
 
 const nav = [
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">{children}</main>
         <footer className="border-t border-line">
           <div className="mx-auto max-w-6xl px-4 py-6 text-xs leading-relaxed text-muted sm:px-6">
-            Fonte: prestações de contas de candidatos, TSE (dadosabertos.tse.jus.br), eleições 2018–2024.
+            Fonte: prestações de contas de candidatos, TSE (dadosabertos.tse.jus.br), eleições 2018–2026.
             Contratar advogado e contador em campanha é legal — o contador é obrigatório. Os números
             mostram volume e concentração, não irregularidade.{" "}
             <Link href="/metodologia" className="underline underline-offset-2 hover:text-ink">

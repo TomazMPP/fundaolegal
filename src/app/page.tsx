@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import FilterBar from "@/components/FilterBar";
 import { BarList, BarraCelula, BarraFontes, Card, Legenda, SerieAnos, Stat } from "@/components/charts";
 import { campoAno, camposRecorte, campoTipo } from "@/lib/campos";
-import { ANOS, ANO_PARCIAL, TIPOS, concentracao, escritorios, totais, totaisPor } from "@/lib/data";
+import { ANOS, PARCIAIS, TIPOS, concentracao, escritorios, totais, totaisPor } from "@/lib/data";
 import { fmtBRL, fmtBRLc, fmtDelta, fmtInt, fmtPct, titulo } from "@/lib/format";
 import { lerFiltros, qs, type SP } from "@/lib/params";
 
@@ -16,7 +16,8 @@ export default async function Panorama({ searchParams }: { searchParams: Promise
   const publico = t.fefc + t.fp;
 
   // comparação com a eleição equivalente anterior (municipal x municipal, geral x geral)
-  const anoAnt = f.ano && f.ano - 4 > ANO_PARCIAL ? f.ano - 4 : undefined;
+  const anoAnt =
+    f.ano && ANOS.includes((f.ano - 4) as never) && !PARCIAIS[f.ano - 4] && !PARCIAIS[f.ano] ? f.ano - 4 : undefined;
   const ant = anoAnt ? totais({ ...f, ano: anoAnt }) : undefined;
   const firmasAnt = anoAnt ? escritorios({ ...f, ano: anoAnt }).length : undefined;
   const vs = anoAnt ? `vs ${anoAnt}` : "";
@@ -44,7 +45,7 @@ export default async function Panorama({ searchParams }: { searchParams: Promise
   const porCargo = totaisPor("cargo", f).sort((a, b) => b.valor - a.valor);
 
   const recorte = [
-    f.ano ? `Eleições ${f.ano % 4 === 0 ? "municipais" : "gerais"} ${f.ano}` : "Eleições 2018–2024",
+    f.ano ? `Eleições ${f.ano % 4 === 0 ? "municipais" : "gerais"} ${f.ano}` : "Eleições 2018–2026",
     f.tipo ? TIPOS[f.tipo].toLowerCase() : "advocacia e contabilidade",
     f.uf,
     f.partido,
@@ -77,9 +78,7 @@ export default async function Panorama({ searchParams }: { searchParams: Promise
             <p className="max-w-3xl text-[15px] leading-relaxed text-ink-2">
               São {fmtPct(publico / t.valor)} dos {fmtBRLc(t.valor)} contratados por{" "}
               {fmtInt(t.candidatos)} candidaturas — em média {fmtBRL(t.valor / t.candidatos)} por candidatura.
-              {f.ano === ANO_PARCIAL && (
-                <> Em 2018 só há dados de escritórios (PJ) identificados pelo CNAE; a série é parcial.</>
-              )}
+              {f.ano && PARCIAIS[f.ano] && <> {PARCIAIS[f.ano]}</>}
             </p>
             <div className="max-w-3xl">
               <BarraFontes d={t} />
@@ -170,11 +169,11 @@ export default async function Panorama({ searchParams }: { searchParams: Promise
               titulo="Por eleição"
               sub="Total contratado, por fonte do pagamento. Eleições municipais (2020, 2024) têm muito mais candidaturas."
             >
-              <SerieAnos dados={serie} destaque={f.ano} parcial={ANO_PARCIAL} />
+              <SerieAnos dados={serie} destaque={f.ano} parciais={Object.keys(PARCIAIS).map(Number)} />
               <div className="mt-3">
                 <Legenda />
               </div>
-              <p className="mt-2 text-[11px] text-muted">* 2018: só escritórios PJ identificados por CNAE.</p>
+              <p className="mt-2 text-[11px] text-muted">* 2018: só escritórios identificados por CNAE. 2026: dados preliminares.</p>
             </Card>
           </div>
 

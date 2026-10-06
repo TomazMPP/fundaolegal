@@ -87,11 +87,11 @@ export function BarraFontes({ d: bruto }: { d: Fontes }) {
 export function SerieAnos({
   dados,
   destaque,
-  parcial,
+  parciais = [],
 }: {
   dados: ({ ano: number } & Fontes)[];
   destaque?: number;
-  parcial?: number;
+  parciais?: number[];
 }) {
   const max = Math.max(...dados.map((d) => d.valor), 1);
   const passo = max > 500e6 ? 250e6 : max > 200e6 ? 100e6 : 50e6;
@@ -149,7 +149,7 @@ export function SerieAnos({
           {dados.map((d) => (
             <span key={d.ano} className="tnum w-16 text-center text-xs text-ink-2">
               {d.ano}
-              {d.ano === parcial ? "*" : ""}
+              {parciais.includes(d.ano) ? "*" : ""}
             </span>
           ))}
         </div>
