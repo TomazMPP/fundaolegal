@@ -41,3 +41,16 @@ Critérios e limitações: página `/metodologia`.
 | `/api/escritorios` | CSV do ranking (mesmos filtros da URL) |
 
 Todos os filtros ficam na URL — qualquer recorte pode ser compartilhado por link.
+
+## total.fundaolegal
+
+Ranking de quanto cada político custou em dinheiro público: salário (estimado pelo subsídio × tempo em exercício,
+desde 1995), cota parlamentar (CEAP/CEAPS, desde 2008), ajuda de custo e fundão (FEFC + Fundo Partidário, todos os
+candidatos desde 2018). Páginas em `src/app/total`, dados em `src/data/total`.
+
+O mesmo deploy serve `/total` no domínio principal e a raiz de qualquer host `total.*` (rewrite em `next.config.ts`).
+Na Vercel basta adicionar o domínio `total.<seu-domínio>` ao projeto.
+
+```bash
+./pipeline/total/build.sh   # APIs da Câmara/Senado, cotas, TSE e IPCA → src/data/total
+```
